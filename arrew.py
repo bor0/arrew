@@ -75,6 +75,9 @@ def unify_matches(matches):
 
 def apply_rule(env, rule, axioms, name):
     all_matches = {}
+    if rule not in env["rules"]:
+        raise Exception("Invalid rule: '%s'" % rule)
+
     rule = env["rules"][rule]
     hypotheses = rule["hypotheses"]
 

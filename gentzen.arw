@@ -1,0 +1,25 @@
+aTmX : X
+aTmY : Y
+
+rTmAnd : a -> b -> a&b
+rTmImp : a -> b -> a=>b
+
+ruleMP : x -> y -> |-x -> |-(x)=>(y) -> |-y
+ruleJoin : x -> y -> |-(x)=>(y=>x&y) # object level
+ruleJoin' : |-x -> |-y -> |-(x)&(y)  # meta level
+
+# Terms and theorem needed for th1
+tmXandY : rTmAnd aTmX aTmY
+tmYimpXandY : rTmImp aTmY tmXandY
+thXimpYimpXandY : ruleJoin aTmX aTmY
+
+aPrfX : |-X
+# Given the proof of |-X (aPrfX), we can now conclude Y=>X&Y
+th1 : ruleMP aTmX tmYimpXandY aPrfX thXimpYimpXandY
+
+aPrfY : |-Y
+# Given the proof of |-Y (aPrfY), we can now conclude X&Y
+th2 : ruleMP aTmY tmXandY aPrfY th1
+
+# Combine both th1 and th2 at the meta level
+th3 : ruleJoin' th1 th2
