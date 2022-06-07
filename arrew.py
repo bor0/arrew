@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -73,12 +73,7 @@ def unify_matches(matches):
     return unified
 
 
-def apply_rule(
-    env,
-    rule,
-    axioms,
-    name,
-):
+def apply_rule(env, rule, axioms, name):
     all_matches = {}
     rule = env["rules"][rule]
     hypotheses = rule["hypotheses"]
