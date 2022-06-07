@@ -16,11 +16,15 @@ r<name> : <expr> -> <expr> -> ... -> <expr>
 
 Any lowercase character in a rule expression is considered a variable and will be used to match and substitute within the subsequent expressions.
 
+All expressions but the last are considered the hypothesis (arguments to be passed when used in a theorem), and the last one is considered the conclusion
+
 The syntax of specifying theorems is as follows:
 
 ```
 t<name> : <ruleN> <arg1> <arg2> ... <argn>
 ```
+
+In this case, to `<ruleN>` will be applied the corresponding arguments, be matched/unified, and the final argument in the rule will be produced as a result.
 
 As an example, consider a simple formal system:
 
