@@ -1,0 +1,8 @@
+a1 : MI
+r1 : xI -> xIU
+r2 : Mx -> Mxx
+r3 : xIIIy -> xUy
+r4 : xUUy -> xy
+t1 : r2 a1
+t2 : r2 t1
+t3 : r3 t2

@@ -1,0 +1,81 @@
+# Peano's axioms
+# --------------
+#
+# As per https://en.wikipedia.org/wiki/Peano_axioms
+
+# Meta variables
+aW : W
+aX : X
+aY : Y
+
+# 0 is a natural number
+aZ : 0
+
+# Equality refl, symm, tr
+aTmEq : EQ       # (term) axiom for 'Eq'
+rTmEq : x -> x,x # (term) rule for pairing a number pairing rule term
+rEqR : x -> EQ(x,x)
+rEqS : x -> y -> EQ(x,y) -> EQ(y,x)
+rEqT : x -> y -> z -> EQ(x,y) -> EQ(y,z) -> (EQ(x,z))
+
+# Successor
+rS : x -> S(x)
+
+# Inj left
+rIL : m -> n -> EQ(m,n) -> EQ(S(m),S(n))
+# Inj right
+rIR : m -> n -> EQ(S(m),S(n)) -> EQ(m,n)
+
+# TODO: test
+rTest : m -> n -> a -> (EQ(m,n)) -> (EQ(ADD(a,m),ADD(a,n)))
+
+# Induction
+rBaseTerm : p -> n -> p(n)
+rIndTerm : p -> n -> p(n)=>p(S(n))
+rInd     : p -> n -> p(0) -> p(n)=>p(S(n)) -> ∀X,p(n)
+# --------------
+
+# Addition
+rAZ     : x -> (EQ(ADD(x,0),x))
+rAS     : x -> y -> (EQ(ADD(x,S(y)),S(ADD(x,y))))
+rASTerm : x -> y -> (ADD(x,y)) # term construction
+
+# Multiplication
+rMZ     : x -> (EQ(MUL(x,0),0))
+rMS     : x -> y -> (EQ(MUL(x,S(y)),ADD(x,MUL(x,y))))
+rMSTerm : x -> y -> MUL(x,y)
+
+# The terms needed for the proof of Theorem 1
+tmOne                : rS aZ
+tmTwo                : rS tmOne
+tmOnePlusZero        : rASTerm tmOne aZ
+tmOnePlusOne         : rASTerm tmOne tmOne
+tmOnePlusOnePlusZero : rS tmOnePlusZero
+
+# Theorem 1: One plus one is two
+th1step1 : rAS tmOne aZ
+th1step2 : rAZ tmOne
+th1step3 : rIL tmOnePlusZero tmOne th1step2
+th1      : rEqT tmOnePlusOne tmOnePlusOnePlusZero tmTwo th1step1 th1step3
+
+# The terms needed for the proof of Theorem 2
+tmXisX : rEqR aX
+tmXmulZisX : rMZ aX
+tmXmulZ : rMSTerm aX aZ
+tmXmulOne : rMSTerm aX tmOne
+tmXaddXmulZ : rASTerm aX tmXmulZ
+tmXaddZ : rASTerm aX aZ
+
+# Theorem 2: X times one is X
+th2step1 : rMS aX aZ
+th2step2 : rTest tmXmulZ aZ aX tmXmulZisX
+th2step3 : rEqT tmXmulOne tmXaddXmulZ tmXaddZ th2step1 th2step2
+th2step4 : rAZ aX
+th2 : rEqT tmXmulOne tmXaddZ aX th2step3 th2step4
+
+# Theorem 3: Example induction
+th3step1 : rTmEq aZ
+th3step2 : rBaseTerm aTmEq th3step1
+th3step3 : rTmEq aX
+th3step4 : rIndTerm aTmEq th3step3
+th3 : rInd aTmEq th3step3 th3step2 th3step4
