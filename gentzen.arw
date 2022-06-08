@@ -3,11 +3,11 @@ ruleJoin : |-x=>y=>x&y # object level
 ruleJoin' : |-x -> |-y -> |-(x)&(y)  # meta level
 
 # Terms and theorem needed for th1
-thXimpYimpXandY : ruleJoin x=X;y=Y
+th1step1! : ruleJoin x=X;y=Y
 
 aPrfX : |-X
 # Given the proof of |-X (aPrfX), we can now conclude Y=>X&Y
-th1 : ruleMP x=X;y=Y=>X&Y aPrfX thXimpYimpXandY
+th1 : ruleMP x=X;y=Y=>X&Y aPrfX th1step1!
 
 aPrfY : |-Y
 # Given the proof of |-Y (aPrfY), we can now conclude X&Y

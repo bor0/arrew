@@ -131,4 +131,6 @@ for theorem_name in env['theorems']:
     env['theorems'][theorem_name] = apply_rule(env, theorem, theorem_name)
 
 for name in env['theorems']:
+    if name[-1] == '!':
+        continue
     print('%s : %s' % (name, env['theorems'][name]))

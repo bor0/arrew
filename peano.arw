@@ -35,23 +35,23 @@ rMZ     : EQ(MUL(x,0),0)
 rMS     : EQ(MUL(x,S(y)),ADD(x,MUL(x,y)))
 
 # Theorem 1: One plus one is two
-th1step1 : rAS x=S(0);y=0
-th1step2 : rAZ x=S(0)
-th1step3 : rIL m=ADD(S(0),0);n=S(0) th1step2
-th1      : rEqT x=ADD(S(0),S(0));y=S(ADD(S(0),0));z=S(S(0)) th1step1 th1step3
+th1step1! : rAS x=S(0);y=0
+th1step2! : rAZ x=S(0)
+th1step3! : rIL m=ADD(S(0),0);n=S(0) th1step2!
+th1      : rEqT x=ADD(S(0),S(0));y=S(ADD(S(0),0));z=S(S(0)) th1step1! th1step3!
 
 ###
 # the terms needed for the proof of theorem 2
-tmXmulZisX  : rMZ x=X
+tmXmulZisX! : rMZ x=X
 
 # Theorem 2: X times one is X
-th2step1 : rMS x=X;y=0
-th2step2 : rcongAdd m=MUL(X,0);n=0;a=X tmXmulZisX
-th2step3 : rEqT x=MUL(X,S(0));y=ADD(X,MUL(X,0));z=ADD(X,0) th2step1 th2step2
-th2step4 : rAZ x=X
-th2      : rEqT x=MUL(X,S(0));y=ADD(X,0);z=X th2step3 th2step4
+th2step1! : rMS x=X;y=0
+th2step2! : rcongAdd m=MUL(X,0);n=0;a=X tmXmulZisX!
+th2step3! : rEqT x=MUL(X,S(0));y=ADD(X,MUL(X,0));z=ADD(X,0) th2step1! th2step2!
+th2step4! : rAZ x=X
+th2      : rEqT x=MUL(X,S(0));y=ADD(X,0);z=X th2step3! th2step4!
 
 # Theorem 3: Example induction
-th3step1 : rBaseTerm p=P;n=0
-th3step2 : rIndTerm p=P;n=X
-th3      : rInd p=P;n=X th3step1 th3step2
+th3step1! : rBaseTerm p=P;n=0
+th3step2! : rIndTerm p=P;n=X
+th3      : rInd p=P;n=X th3step1! th3step2!
