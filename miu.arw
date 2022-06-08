@@ -1,12 +1,9 @@
 a1 : MI
-aTmM : M
-aTmI : I
-aTmII : II
 
 r1 : xI -> xIU
 r2 : Mx -> Mxx
 r3 : xIIIy -> xUy
 
-t1 : r2 x=aTmI a1
-t2 : r2 x=aTmII t1
-t3 : r3 x=aTmM,y=aTmI t2
+t1 : r2 x=I a1
+t2 : r2 x=II t1
+t3 : r3 x=M;y=I t2
