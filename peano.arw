@@ -10,10 +10,8 @@ aX : X
 aZ : 0
 
 # Equality refl, symm, tr
-aTmEq : EQ       # (term) axiom for 'Eq'
-rTmEq : x,x # (term) rule for pairing a number pairing rule term
 rEqR : EQ(x,x)
-rEqS : x -> y -> EQ(x,y) -> EQ(y,x)
+rEqS : EQ(x,y) -> EQ(y,x)
 rEqT : EQ(x,y) -> EQ(y,z) -> EQ(x,z)
 
 # Successor
@@ -22,7 +20,7 @@ rS : S(x)
 # Inj left
 rIL : EQ(m,n) -> EQ(S(m),S(n))
 # Inj right
-rIR : m -> n -> EQ(S(m),S(n)) -> (EQ(m,n))
+rIR : EQ(S(m),S(n)) -> EQ(m,n)
 
 # Equality respects function application (addition), i.e. m=n -> a+m=a+n.
 # TODO: This can probably be derived as a theorem from `rIL` and `rIR`
@@ -44,6 +42,7 @@ rMZ     : EQ(MUL(x,0),0)
 rMS     : EQ(MUL(x,S(y)),ADD(x,MUL(x,y)))
 rMSTerm : MUL(x,y)
 
+###
 # The terms needed for the proof of Theorem 1
 tmOne              : rS x=aZ
 tmTwo              : rS x=tmOne
@@ -57,6 +56,7 @@ th1step2 : rAZ x=tmOne
 th1step3 : rIL m=tmOneaddZero,n=tmOne th1step2
 th1      : rEqT x=tmOneaddOne,y=tmOneaddOneaddZero,z=tmTwo th1step1 th1step3
 
+###
 # The terms needed for the proof of Theorem 2
 tmXisX      : rEqR x=aX
 tmXmulZisX  : rMZ x=aX
@@ -72,10 +72,11 @@ th2step3 : rEqT x=tmXmulOne,y=tmXaddXmulZ,z=tmXaddZ th2step1 th2step2
 th2step4 : rAZ x=aX
 th2      : rEqT x=tmXmulOne,y=tmXaddZ,z=aX th2step3 th2step4
 
+###
 # The terms needed for the proof of Theorem 3
 aTmP : P
-aTmPZ : P(0) # assuming P(0)
 
 # Theorem 3: Example induction
-th3step1 : rIndTerm p=aTmP,n=aX
-th3      : rInd p=aTmP,n=aX aTmPZ th3step1
+th3step1 : rBaseTerm p=aTmP,n=aZ
+th3step2 : rIndTerm p=aTmP,n=aX
+th3      : rInd p=aTmP,n=aX th3step1 th3step2
