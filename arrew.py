@@ -87,19 +87,18 @@ def calculate_environment(code):
 
 
 def apply_rule(env, theorem, theorem_name):
+    replacements = theorem['replacements']
+    th_hypotheses = theorem['hypotheses']
     rule = theorem['rule']
 
     if rule not in env['rules']:
         raise Exception("Invalid rule: '%s'" % rule)
 
-    replacements = theorem['replacements'].copy()
-    th_hypotheses = theorem['hypotheses'].copy()
     ru_hypotheses = env['rules'][rule]['hypotheses'].copy()
     ru_conclusion = env['rules'][rule]['conclusion']
 
     # Process theorem's hypotheses by substituting for other axioms/theorems
-    for i in range(0, len(th_hypotheses)):
-        h = th_hypotheses[i]
+    for i, h in enumerate(th_hypotheses):
         if h not in env['axioms'] and h not in env['theorems']:
             raise Exception("Invalid axiom/theorem: '%s'" % h)
         hypothesis = (
