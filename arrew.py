@@ -10,15 +10,15 @@ def parse_rules(rules):
 
     # Split rules into hypotheses and conclusion
     for name in rules:
-        rule = list(map(str.strip, rules[name].split("->")))
-        parsed_rules[name] = {"hypotheses": rule[:-1],
-                              "conclusion": rule[-1]}
+        rule = list(map(str.strip, rules[name].split('->')))
+        parsed_rules[name] = {'hypotheses': rule[:-1],
+                              'conclusion': rule[-1]}
 
     return parsed_rules
 
 
 def parse_replacements(theorem_name, replacements):
-    new_replacements = {}
+    parsed_replacements = {}
     replacements = replacements.split(',')
 
     # Parses "x=X,y=Y,..." into a dictionary for easier substitution, checking syntax on the way
@@ -29,9 +29,9 @@ def parse_replacements(theorem_name, replacements):
             raise Exception(
                 "Invalid syntax for replacement '%s' in '%s'" % (expr, theorem_name))
 
-        new_replacements[replacement[0]] = replacement[1]
+        parsed_replacements[replacement[0]] = replacement[1]
 
-    return new_replacements
+    return parsed_replacements
 
 
 def parse_theorems(theorems):
@@ -39,45 +39,45 @@ def parse_theorems(theorems):
 
     # Process theorems, checking for valid syntax and process replacements on the way
     for name in theorems:
-        parameters = theorems[name].split(" ")
+        parameters = theorems[name].split(' ')
 
         if len(parameters) < 2:
             raise Exception("Invalid syntax for theorem '%s'" % name)
 
         (rule, replacements, hypotheses) = (
             parameters[0], parameters[1], parameters[2:])
-        parsed_theorems[name] = {"rule": rule, "replacements": parse_replacements(
-            name, replacements), "hypotheses": hypotheses}
+        parsed_theorems[name] = {'rule': rule, 'replacements': parse_replacements(
+            name, replacements), 'hypotheses': hypotheses}
 
     return parsed_theorems
 
 
 def calculate_environment(code):
-    env = {"axioms": {}, "rules": {}, "theorems": {}}
-    types = {"a": "axioms", "r": "rules", "t": "theorems"}
+    env = {'axioms': {}, 'rules': {}, 'theorems': {}}
+    types = {'a': 'axioms', 'r': 'rules', 't': 'theorems'}
 
-    code = filter(lambda x: x, code.split("\n"))
+    code = filter(lambda x: x, code.split('\n'))
     code = filter(lambda x: x, map(
-        lambda line: line.split("#")[0], code))  # strip comments
+        lambda line: line.split('#')[0], code))  # strip comments
 
     # Process every line in the code, checking for valid syntax and storing the data for further parsing
     for line in code:
-        spl = list(filter(lambda x: x, map(str.strip, line.split(":"))))
+        parsed_line = list(
+            filter(lambda x: x, map(str.strip, line.split(':'))))
 
-        if len(spl) != 2:
-            raise Exception("Invalid syntax: %s" % line)
+        if len(parsed_line) != 2:
+            raise Exception("Invalid syntax: '%s'" % line)
 
-        [name, expr] = spl
+        [name, expr] = parsed_line
 
-        if name[0] in types:
-            ty = types[name[0]]
-        else:
-            raise Exception("Invalid variable name: %s" % name)
+        if name[0] not in types:
+            raise Exception("Invalid variable name: '%s'" % name)
 
+        ty = types[name[0]]
         env[ty][name] = expr
 
-    env["rules"] = parse_rules(env["rules"])
-    env["theorems"] = parse_theorems(env["theorems"])
+    env['rules'] = parse_rules(env['rules'])
+    env['theorems'] = parse_theorems(env['theorems'])
 
     return env
 
@@ -92,19 +92,19 @@ def apply_rule(env, theorem, theorem_name):
     # Process theorem's hypotheses by substituting for other axioms/theorems
     for i in range(0, len(th_hypotheses)):
         h = th_hypotheses[i]
-        if h not in env["axioms"] and h not in env["theorems"]:
+        if h not in env['axioms'] and h not in env['theorems']:
             raise Exception("Invalid axiom/theorem: '%s'" % h)
         parameter = (
-            env["axioms"][h] if h in env["axioms"] else env["theorems"][h]
+            env['axioms'][h] if h in env['axioms'] else env['theorems'][h]
         )
         th_hypotheses[i] = parameter
 
     # Process replacements data by substituting for other axioms/theorems
     for k, v in replacements.copy().items():
-        if v not in env["axioms"] and v not in env["theorems"]:
+        if v not in env['axioms'] and v not in env['theorems']:
             raise Exception("Invalid axiom/theorem: '%s'" % v)
         parameter = (
-            env["axioms"][v] if v in env["axioms"] else env["theorems"][v]
+            env['axioms'][v] if v in env['axioms'] else env['theorems'][v]
         )
         replacements[k] = parameter
 
@@ -125,19 +125,19 @@ def apply_rule(env, theorem, theorem_name):
 
 
 if len(sys.argv) != 2:
-    exit("Usage: python %s <filename.arw>" % sys.argv[0])
+    exit('Usage: python %s <filename.arw>' % sys.argv[0])
 
 if not exists(sys.argv[1]):
-    exit("Filename %s not found." % sys.argv[0])
+    exit("Filename '%s' not found." % sys.argv[0])
 
 with open(sys.argv[1]) as f:
     code = f.read()
 
 env = calculate_environment(code)
 
-for theorem_name in env["theorems"]:
+for theorem_name in env['theorems']:
     theorem = env['theorems'][theorem_name]
-    env["theorems"][theorem_name] = apply_rule(env, theorem, theorem_name)
+    env['theorems'][theorem_name] = apply_rule(env, theorem, theorem_name)
 
-for name in env["theorems"]:
-    print("%s : %s" % (name, env["theorems"][name]))
+for name in env['theorems']:
+    print('%s : %s' % (name, env['theorems'][name]))
