@@ -4,54 +4,60 @@
 # As per https://en.wikipedia.org/wiki/Peano_axioms
 
 # Equality refl, symm, tr
-rEqR : EQ(x,x)
-rEqS : EQ(x,y) -> EQ(y,x)
-rEqT : EQ(x,y) -> EQ(y,z) -> EQ(x,z)
+rEqR : ⊢EQ(x,x)
+rEqS : ⊢EQ(x,y) -> ⊢EQ(y,x)
+rEqT : ⊢EQ(x,y) -> ⊢EQ(y,z) -> ⊢EQ(x,z)
 
+# Zero is a natural number
+aZ : ⊢0
 # Successor
-rS : S(x)
+rS : ⊢x -> ⊢S(x)
+# Successor (object-level)
+rSO : ⊢x=>S(x)
 
 # Inj left
-rIL : EQ(m,n) -> EQ(S(m),S(n))
+rIL : ⊢EQ(m,n) -> ⊢EQ(S(m),S(n))
 # Inj right
-rIR : EQ(S(m),S(n)) -> EQ(m,n)
+rIR : ⊢EQ(S(m),S(n)) -> ⊢EQ(m,n)
 
 # Equality respects function application (addition), i.e. m=n -> a+m=a+n.
 # TODO: This can probably be derived as a theorem from `rIL` and `rIR`
-rcongAdd : EQ(m,n) -> EQ(ADD(a,m),ADD(a,n))
+rcongAdd : ⊢EQ(m,n) -> ⊢EQ(ADD(a,m),ADD(a,n))
 
 # Induction
-rBaseTerm : p(n)
-rIndTerm  : p(n)=>p(S(n))
-rInd      : p(0) -> p(n)=>p(S(n)) -> ∀X,p(n)
+rInd      : ⊢p(0) -> ⊢p(n)=>p(S(n)) -> ⊢∀X,p(X)
 # --------------
 
 # Addition
-rAZ     : EQ(ADD(x,0),x)
-rAS     : EQ(ADD(x,S(y)),S(ADD(x,y)))
+rAZ     : ⊢EQ(ADD(x,0),x)
+rAS     : ⊢EQ(ADD(x,S(y)),S(ADD(x,y)))
 
 # Multiplication
-rMZ     : EQ(MUL(x,0),0)
-rMS     : EQ(MUL(x,S(y)),ADD(x,MUL(x,y)))
+rMZ     : ⊢EQ(MUL(x,0),0)
+rMS     : ⊢EQ(MUL(x,S(y)),ADD(x,MUL(x,y)))
+
+# Evenness
+aEvZ : ⊢EV(0)
+rEvS : ⊢EV(x) -> ⊢EV(S(S(x)))
 
 # Theorem 1: One plus one is two
 th1step1! : rAS x=S(0);y=0
 th1step2! : rAZ x=S(0)
 th1step3! : rIL m=ADD(S(0),0);n=S(0) th1step2!
-th1      : rEqT x=ADD(S(0),S(0));y=S(ADD(S(0),0));z=S(S(0)) th1step1! th1step3!
-
-###
-# the terms needed for the proof of theorem 2
-tmXmulZisX! : rMZ x=X
+th1       : rEqT x=ADD(S(0),S(0));y=S(ADD(S(0),0));z=S(S(0)) th1step1! th1step3!
 
 # Theorem 2: X times one is X
-th2step1! : rMS x=X;y=0
-th2step2! : rcongAdd m=MUL(X,0);n=0;a=X tmXmulZisX!
-th2step3! : rEqT x=MUL(X,S(0));y=ADD(X,MUL(X,0));z=ADD(X,0) th2step1! th2step2!
-th2step4! : rAZ x=X
-th2      : rEqT x=MUL(X,S(0));y=ADD(X,0);z=X th2step3! th2step4!
+tmXmulZisX! : rMZ x=X
+th2step1!   : rMS x=X;y=0
+th2step2!   : rcongAdd m=MUL(X,0);n=0;a=X tmXmulZisX!
+th2step3!   : rEqT x=MUL(X,S(0));y=ADD(X,MUL(X,0));z=ADD(X,0) th2step1! th2step2!
+th2step4!   : rAZ x=X
+th2         : rEqT x=MUL(X,S(0));y=ADD(X,0);z=X th2step3! th2step4!
 
-# Theorem 3: Example induction
-th3step1! : rBaseTerm p=P;n=0
-th3step2! : rIndTerm p=P;n=X
-th3      : rInd p=P;n=X th3step1! th3step2!
+# Theorem 3: Two is even
+th3 : rEvS x=0 aEvZ
+
+# Theorem 4: Example induction
+th4step1! : rS x=0 aZ
+th4step2! : rSO x=S(0)
+th4       : rInd p=S;n=0 th4step1! th4step2!
