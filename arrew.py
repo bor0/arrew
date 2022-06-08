@@ -39,13 +39,13 @@ def parse_theorems(theorems):
 
     # Process theorems, checking for valid syntax and process replacements on the way
     for name in theorems:
-        parameters = theorems[name].split(' ')
+        arguments = theorems[name].split(' ')
 
-        if len(parameters) < 2:
+        if len(arguments) < 2:
             raise Exception("Invalid syntax for theorem '%s'" % name)
 
         (rule, replacements, hypotheses) = (
-            parameters[0], parameters[1], parameters[2:])
+            arguments[0], arguments[1], arguments[2:])
         parsed_theorems[name] = {'rule': rule, 'replacements': parse_replacements(
             name, replacements), 'hypotheses': hypotheses}
 
@@ -102,23 +102,22 @@ def apply_rule(env, theorem, theorem_name):
         h = th_hypotheses[i]
         if h not in env['axioms'] and h not in env['theorems']:
             raise Exception("Invalid axiom/theorem: '%s'" % h)
-        parameter = (
+        hypothesis = (
             env['axioms'][h] if h in env['axioms'] else env['theorems'][h]
         )
-        th_hypotheses[i] = parameter
+        th_hypotheses[i] = hypothesis
 
-    # Process rule's hypotheses by substituting the replacements
-    for i in range(0, len(ru_hypotheses)):
-        for k, v in replacements.items():
+    for k, v in replacements.items():
+        # Process rule's hypotheses by substituting the replacements
+        for i in range(0, len(ru_hypotheses)):
             ru_hypotheses[i] = ru_hypotheses[i].replace(k, v)
+
+        # Process conclusion by substituting the replacements
+        ru_conclusion = ru_conclusion.replace(k, v)
 
     if ru_hypotheses != th_hypotheses:
         raise Exception("Hypotheses mismatch for '%s': cannot unify\n\t%s\nand\n\t%s" % (
             theorem_name, str(ru_hypotheses), str(th_hypotheses)))
-
-    for k, v in replacements.items():
-        # Process conclusion by substituting the replacements
-        ru_conclusion = ru_conclusion.replace(k, v)
 
     return ru_conclusion
 
