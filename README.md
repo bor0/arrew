@@ -1,12 +1,16 @@
 # The Arrew theorem prover
 
-Arrew (ARrow REWriter) is a computer program that allows formal mathematical systems to be expressed, along with the derivation of theorems.
+Arrew (ARrow REWriter) is a computer program that allows formal mathematical systems to be expressed, and then perform computation to derive theorems.
+
+## Axioms
 
 The syntax for specifying axioms is as follows:
 
 ```
 a<name> : <term>
 ```
+
+## Rules
 
 The syntax for specifying rules is as follows:
 
@@ -18,6 +22,8 @@ Lowercase characters in a rule expression are considered a variable, and will be
 
 All expressions but the last are considered the hypothesis (arguments to be passed when used in a theorem), and the last one is the conclusion.
 
+## Theorems
+
 The syntax for specifying theorems is as follows:
 
 ```
@@ -25,6 +31,8 @@ t<name> : <ruleN> <x=X;y=Y;...> <arg1> <arg2> ... <argn>
 ```
 
 In this case, the rule `<ruleN>` will be applied to the corresponding arguments. Substitution (`x` with `X`; `y` with `Y`...) will be performed in both the rule's provided arguments and the theorem's hypotheses, and they will be matched/unified. If unification is successful, the final argument in the rule `argn` will be produced as a result.
+
+## Example
 
 As an example, consider a simple formal system:
 
