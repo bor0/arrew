@@ -74,6 +74,10 @@ def calculate_environment(code):
             raise Exception("Invalid variable name: '%s'" % name)
 
         ty = types[name[0]]
+
+        if name in env[ty]:
+            raise Exception("Name redeclaration: '%s'" % name)
+
         env[ty][name] = expr
 
     env['rules'] = parse_rules(env['rules'])
@@ -84,6 +88,10 @@ def calculate_environment(code):
 
 def apply_rule(env, theorem, theorem_name):
     rule = theorem['rule']
+
+    if rule not in env['rules']:
+        raise Exception("Invalid rule: '%s'" % rule)
+
     replacements = theorem['replacements'].copy()
     th_hypotheses = theorem['hypotheses'].copy()
     ru_hypotheses = env['rules'][rule]['hypotheses'].copy()
