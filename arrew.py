@@ -2,36 +2,57 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import re
 from os.path import exists
-
-
-def rule_to_regex(rule):
-    regex = r'^'
-
-    for i in range(0, len(rule)):
-        if rule[i].islower():
-            regex += '(?P<%s_%d>.+)' % (rule[i], i)
-        else:
-            regex += re.escape(rule[i])
-
-    regex += '$'
-
-    return re.compile(regex)
 
 
 def parse_rules(rules):
     parsed_rules = {}
 
+    # Split rules into hypotheses and conclusion
     for name in rules:
         rule = list(map(str.strip, rules[name].split("->")))
-        parsed_rules[name] = {"hypotheses": list(
-            map(rule_to_regex, rule[:-1])), "conclusion": rule[-1]}
+        parsed_rules[name] = {"hypotheses": rule[:-1],
+                              "conclusion": rule[-1]}
 
     return parsed_rules
 
 
-def calc_env(code):
+def parse_replacements(theorem_name, replacements):
+    new_replacements = {}
+    replacements = replacements.split(',')
+
+    # Parses "x=X,y=Y,..." into a dictionary for easier substitution, checking syntax on the way
+    for expr in replacements:
+        replacement = expr.split('=')
+
+        if len(replacement) < 2 or len(replacement[0]) != 1 or not replacement[0].islower():
+            raise Exception(
+                "Invalid syntax for replacement '%s' in '%s'" % (expr, theorem_name))
+
+        new_replacements[replacement[0]] = replacement[1]
+
+    return new_replacements
+
+
+def parse_theorems(theorems):
+    parsed_theorems = {}
+
+    # Process theorems, checking for valid syntax and process replacements on the way
+    for name in theorems:
+        parameters = theorems[name].split(" ")
+
+        if len(parameters) < 2:
+            raise Exception("Invalid syntax for theorem '%s'" % name)
+
+        (rule, replacements, hypotheses) = (
+            parameters[0], parameters[1], parameters[2:])
+        parsed_theorems[name] = {"rule": rule, "replacements": parse_replacements(
+            name, replacements), "hypotheses": hypotheses}
+
+    return parsed_theorems
+
+
+def calculate_environment(code):
     env = {"axioms": {}, "rules": {}, "theorems": {}}
     types = {"a": "axioms", "r": "rules", "t": "theorems"}
 
@@ -39,6 +60,7 @@ def calc_env(code):
     code = filter(lambda x: x, map(
         lambda line: line.split("#")[0], code))  # strip comments
 
+    # Process every line in the code, checking for valid syntax and storing the data for further parsing
     for line in code:
         spl = list(filter(lambda x: x, map(str.strip, line.split(":"))))
 
@@ -55,87 +77,51 @@ def calc_env(code):
         env[ty][name] = expr
 
     env["rules"] = parse_rules(env["rules"])
+    env["theorems"] = parse_theorems(env["theorems"])
 
     return env
 
 
-def unify_matches(matches):
-    unified = {}
-    keys = list(map(lambda x: [x] + [x.split('_')[0]], list(matches.keys())))
+def apply_rule(env, theorem, theorem_name):
+    rule = theorem['rule']
+    replacements = theorem['replacements'].copy()
+    th_hypotheses = theorem['hypotheses'].copy()
+    ru_hypotheses = env['rules'][rule]['hypotheses'].copy()
+    ru_conclusion = env['rules'][rule]['conclusion']
 
-    for [key, group] in keys:
-        if group not in unified:
-            unified[group] = matches[key]
-        elif unified[group] != matches[key]:
-            raise Exception("Mismatch for variable '%s', expected '%s' but got '%s'" % (
-                group, unified[group], matches[key]))
-
-    return unified
-
-
-def apply_rule(env, rule, axioms, name):
-    all_matches = {}
-    if rule not in env["rules"]:
-        raise Exception("Invalid rule: '%s'" % rule)
-
-    rule = env["rules"][rule]
-    hypotheses = rule["hypotheses"]
-
-    # Match every axiom (parameter) with the rule's hypotheses
-
-    for axiom in axioms:
-        if axiom not in env["axioms"] and axiom not in env["theorems"]:
-            raise Exception("Invalid axiom/theorem: '%s'" % axiom)
-
-        if len(hypotheses) == 0:
-            raise Exception(
-                "Mismatch between number of hypotheses and rule arguments: '%s'" % name
-            )
-
-        axiom = (
-            env["axioms"][axiom] if axiom in env["axioms"] else env["theorems"][axiom]
+    # Process theorem's hypotheses by substituting for other axioms/theorems
+    for i in range(0, len(th_hypotheses)):
+        h = th_hypotheses[i]
+        if h not in env["axioms"] and h not in env["theorems"]:
+            raise Exception("Invalid axiom/theorem: '%s'" % h)
+        parameter = (
+            env["axioms"][h] if h in env["axioms"] else env["theorems"][h]
         )
-        (hypothesis, hypotheses) = (hypotheses[0], hypotheses[1:])
+        th_hypotheses[i] = parameter
 
-        matches = hypothesis.search(axiom)
-        if matches == None:
-            continue
-
-        matches = matches.groupdict()
-
-        if len(matches) == 0:
-            raise Exception(
-                "Rule does not match the hypothesis: '%s' ('%s')" % (
-                    name, axiom)
-            )
-
-        matches = unify_matches(matches)
-
-        for key in matches:
-            if not key.islower():  # lowercase are variables
-                continue
-
-            if key in all_matches and all_matches[key] != matches[key]:
-                raise Exception(
-                    "Rule value mismatch. In '%s', for variable '%s' expected '%s' but got '%s'"
-                    % (name, key, all_matches[key], matches[key])
-                )
-
-            all_matches[key] = matches[key]
-
-    if len(hypotheses) != 0:
-        raise Exception(
-            "Mismatch between number of hypotheses and rule arguments: '%s'" % name
+    # Process replacements data by substituting for other axioms/theorems
+    for k, v in replacements.copy().items():
+        if v not in env["axioms"] and v not in env["theorems"]:
+            raise Exception("Invalid axiom/theorem: '%s'" % v)
+        parameter = (
+            env["axioms"][v] if v in env["axioms"] else env["theorems"][v]
         )
+        replacements[k] = parameter
 
-    axiom = rule["conclusion"]
+    # Process rule's hypotheses by substituting the replacements
+    for i in range(0, len(ru_hypotheses)):
+        for k, v in replacements.items():
+            ru_hypotheses[i] = ru_hypotheses[i].replace(k, v)
 
-    # Perform replacement
-    for variable in all_matches:
-        replacement = all_matches[variable]
-        axiom = axiom.replace(variable, replacement)
+    if ru_hypotheses != th_hypotheses:
+        raise Exception("Hypotheses mismatch for '%s': cannot unify\n\t%s\nand\n\t%s" % (
+            theorem_name, str(ru_hypotheses), str(th_hypotheses)))
 
-    return axiom
+    for k, v in replacements.items():
+        # Process conclusion by substituting the replacements
+        ru_conclusion = ru_conclusion.replace(k, v)
+
+    return ru_conclusion
 
 
 if len(sys.argv) != 2:
@@ -147,15 +133,11 @@ if not exists(sys.argv[1]):
 with open(sys.argv[1]) as f:
     code = f.read()
 
-try:
-    env = calc_env(code)
+env = calculate_environment(code)
 
-    for name in env["theorems"]:
-        axioms = env["theorems"][name].split(" ")
-        (rule, axioms) = (axioms[0], axioms[1:])
-        env["theorems"][name] = apply_rule(env, rule, axioms, name)
-except Exception as e:
-    exit(e)
+for theorem_name in env["theorems"]:
+    theorem = env['theorems'][theorem_name]
+    env["theorems"][theorem_name] = apply_rule(env, theorem, theorem_name)
 
 for name in env["theorems"]:
     print("%s : %s" % (name, env["theorems"][name]))

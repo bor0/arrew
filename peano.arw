@@ -4,81 +4,78 @@
 # As per https://en.wikipedia.org/wiki/Peano_axioms
 
 # Meta variables
-aW : W
 aX : X
-aY : Y
 
 # 0 is a natural number
 aZ : 0
 
 # Equality refl, symm, tr
 aTmEq : EQ       # (term) axiom for 'Eq'
-rTmEq : x -> x,x # (term) rule for pairing a number pairing rule term
-rEqR : x -> (EQ(x,x))
+rTmEq : x,x # (term) rule for pairing a number pairing rule term
+rEqR : EQ(x,x)
 rEqS : x -> y -> EQ(x,y) -> EQ(y,x)
-rEqT : x -> y -> z -> EQ(x,y) -> EQ(y,z) -> (EQ(x,z))
+rEqT : EQ(x,y) -> EQ(y,z) -> EQ(x,z)
 
 # Successor
-rS : x -> (S(x))
+rS : S(x)
 
 # Inj left
-rIL : m -> n -> EQ(m,n) -> (EQ(S(m),S(n)))
+rIL : EQ(m,n) -> EQ(S(m),S(n))
 # Inj right
 rIR : m -> n -> EQ(S(m),S(n)) -> (EQ(m,n))
 
 # Equality respects function application (addition), i.e. m=n -> a+m=a+n.
 # TODO: This can probably be derived as a theorem from `rIL` and `rIR`
-rcongAdd : m -> n -> a -> EQ(m,n) -> (EQ(ADD(a,m),ADD(a,n)))
+rcongAdd : EQ(m,n) -> EQ(ADD(a,m),ADD(a,n))
 
 # Induction
-rBaseTerm : p -> n -> p(n)
-rIndTerm  : p -> n -> p(n)=>p(S(n))
-rInd      : p -> n -> p(0) -> p(n)=>p(S(n)) -> ∀X,p(n)
+rBaseTerm : p(n)
+rIndTerm  : p(n)=>p(S(n))
+rInd      : p(0) -> p(n)=>p(S(n)) -> ∀X,p(n)
 # --------------
 
 # Addition
-rAZ     : x -> (EQ(ADD(x,0),x))
-rAS     : x -> y -> (EQ(ADD(x,S(y)),S(ADD(x,y))))
-rASTerm : x -> y -> (ADD(x,y)) # term construction
+rAZ     : EQ(ADD(x,0),x)
+rAS     : EQ(ADD(x,S(y)),S(ADD(x,y)))
+rASTerm : ADD(x,y) # term construction
 
 # Multiplication
-rMZ     : x -> (EQ(MUL(x,0),0))
-rMS     : x -> y -> (EQ(MUL(x,S(y)),ADD(x,MUL(x,y))))
-rMSTerm : x -> y -> (MUL(x,y))
+rMZ     : EQ(MUL(x,0),0)
+rMS     : EQ(MUL(x,S(y)),ADD(x,MUL(x,y)))
+rMSTerm : MUL(x,y)
 
 # The terms needed for the proof of Theorem 1
-tmOne              : rS aZ
-tmTwo              : rS tmOne
-tmOneaddZero       : rASTerm tmOne aZ
-tmOneaddOne        : rASTerm tmOne tmOne
-tmOneaddOneaddZero : rS tmOneaddZero
+tmOne              : rS x=aZ
+tmTwo              : rS x=tmOne
+tmOneaddZero       : rASTerm x=tmOne,y=aZ
+tmOneaddOne        : rASTerm x=tmOne,y=tmOne
+tmOneaddOneaddZero : rS x=tmOneaddZero
 
 # Theorem 1: One plus one is two
-th1step1 : rAS tmOne aZ
-th1step2 : rAZ tmOne
-th1step3 : rIL tmOneaddZero tmOne th1step2
-th1      : rEqT tmOneaddOne tmOneaddOneaddZero tmTwo th1step1 th1step3
+th1step1 : rAS x=tmOne,y=aZ
+th1step2 : rAZ x=tmOne
+th1step3 : rIL m=tmOneaddZero,n=tmOne th1step2
+th1      : rEqT x=tmOneaddOne,y=tmOneaddOneaddZero,z=tmTwo th1step1 th1step3
 
 # The terms needed for the proof of Theorem 2
-tmXisX      : rEqR aX
-tmXmulZisX  : rMZ aX
-tmXmulZ     : rMSTerm aX aZ
-tmXmulOne   : rMSTerm aX tmOne
-tmXaddXmulZ : rASTerm aX tmXmulZ
-tmXaddZ     : rASTerm aX aZ
+tmXisX      : rEqR x=aX
+tmXmulZisX  : rMZ x=aX
+tmXmulZ     : rMSTerm x=aX,y=aZ
+tmXmulOne   : rMSTerm x=aX,y=tmOne
+tmXaddXmulZ : rASTerm x=aX,y=tmXmulZ
+tmXaddZ     : rASTerm x=aX,y=aZ
 
 # Theorem 2: X times one is X
-th2step1 : rMS aX aZ
-th2step2 : rcongAdd tmXmulZ aZ aX tmXmulZisX
-th2step3 : rEqT tmXmulOne tmXaddXmulZ tmXaddZ th2step1 th2step2
-th2step4 : rAZ aX
-th2      : rEqT tmXmulOne tmXaddZ aX th2step3 th2step4
+th2step1 : rMS x=aX,y=aZ
+th2step2 : rcongAdd m=tmXmulZ,n=aZ,a=aX tmXmulZisX
+th2step3 : rEqT x=tmXmulOne,y=tmXaddXmulZ,z=tmXaddZ th2step1 th2step2
+th2step4 : rAZ x=aX
+th2      : rEqT x=tmXmulOne,y=tmXaddZ,z=aX th2step3 th2step4
 
 # The terms needed for the proof of Theorem 3
-tmPairZZ : rTmEq aZ
-tmZeqZ   : rBaseTerm aTmEq tmPairZZ
-tmPairXX : rTmEq aX
+aTmP : P
+aTmPZ : P(0) # assuming P(0)
 
 # Theorem 3: Example induction
-th3step1 : rIndTerm aTmEq tmPairXX
-th3      : rInd aTmEq tmPairXX tmZeqZ th3step1
+th3step1 : rIndTerm p=aTmP,n=aX
+th3      : rInd p=aTmP,n=aX aTmPZ th3step1

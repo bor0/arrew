@@ -21,33 +21,36 @@ All expressions but the last are considered the hypothesis (arguments to be pass
 The syntax of specifying theorems is as follows:
 
 ```
-t<name> : <ruleN> <arg1> <arg2> ... <argn>
+t<name> : <ruleN> <x=X,y=Y,...> <arg1> <arg2> ... <argn>
 ```
 
-In this case, to `<ruleN>` will be applied the corresponding arguments, be matched/unified, and the final argument in the rule will be produced as a result.
+In this case, to `<ruleN>` will be applied the corresponding arguments. Substitution (`x` with `X`, `y` with `Y`...) will be done in both the rule's provided arguments and the theorem's hypotheses, and they will be matched/unified. If unification was successful, the final argument in the rule `argn` will be produced as a result.
 
 As an example, consider a simple formal system:
 
 ```
 a1 : MI
+aTmM : M
+aTmI : I
+aTmII : II
+
 r1 : xI -> xIU
 r2 : Mx -> Mxx
 r3 : xIIIy -> xUy
-r4 : xUUy -> xy
 ```
 
-We specify a single axiom (term) `MI` and four rules that allow transforming axioms to derive new theorems. Consider the following theorems:
+We specify a single axiom (term) `MI` and three rules that allow transforming axioms to derive new theorems. Consider the following theorems:
 
 ```
-t1 : r2 a1
+t1 : r2 x=aTmI a1
 # t1 will be equal to `MII` since the expression `Mx` captures `MI` (note `x` is a variable). The expression `x` will be substituted with the expression `I`.
-t2 : r2 t1
+t2 : r2 x=aTmII t1
 # Similarly, t2 will be equal to `MIIII` following the previous reasoning
-t3 : r3 t2
+t3 : r3 x=aTmM,y=aTmI t2
 # Since `MIIII` is captured by the rule's `xIIIy` set `x` to `M` and `y` to `I`. Then, `xUy` becomes `MUI`
 ```
 
-Note that Arrew is a simple language: it doesn't directly support terms (so they have to be defined in terms of axioms), and also substitutions have no depth, so order has to be controlled with parenthesis. See [Peano's axioms](./peano.arw) as an example; to derive the theorems, run `python3 arrew.py peano.arw`.
+Note that Arrew is a simple language: it doesn't directly support terms (so they have to be defined in terms of axioms). See [Peano's axioms](./peano.arw) as an example; to derive the theorems, run `python3 arrew.py peano.arw`.
 
 ## Development
 
