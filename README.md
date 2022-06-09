@@ -2,14 +2,6 @@
 
 Arrew (ARrow REWriter) is a computer program that allows formal mathematical systems to be expressed, and then perform computation to derive theorems.
 
-## Axioms
-
-The syntax for specifying axioms is as follows:
-
-```
-a<name> : <term>
-```
-
 ## Rules
 
 The syntax for specifying rules is as follows:
@@ -37,17 +29,18 @@ In this case, the rule `<ruleN>` will be applied to the corresponding arguments.
 As an example, consider a simple formal system:
 
 ```
-a1 : MI
+ra1 : MI
+tha1! : ra1
 
 r1 : xI -> xIU
 r2 : Mx -> Mxx
 r3 : xIIIy -> xUy
 ```
 
-We specify a single axiom (term) `MI` and three rules that allow transforming axioms to derive new theorems. Consider the following theorems:
+The rule `ra1` specifies the axiom `MI` (converted into theorem `tha!`) and three rules that allow transforming axioms to derive new theorems. Consider the following theorems:
 
 ```
-t1 : r2 x=I a1
+t1 : r2 x=I tha1!
 # t1 will be equal to `MII` since the expression `Mx` captures `MI` (note `x` is a variable). The expression `x` will be substituted with the expression `I`
 t2 : r2 x=II t1
 # Similarly, t2 will be equal to `MIIII` following the previous reasoning

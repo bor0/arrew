@@ -19,6 +19,10 @@ def parse_rules(rules):
 
 def parse_replacements(theorem_name, replacements):
     parsed_replacements = {}
+
+    if replacements == None:
+        return parsed_replacements
+
     replacements = replacements.split(';')
 
     # Parses "x=X,y=Y,..." into a dictionary for easier substitution, checking syntax on the way
@@ -41,11 +45,13 @@ def parse_theorems(theorems):
     for name in theorems:
         arguments = theorems[name].split(' ')
 
-        if len(arguments) < 2:
+        if len(arguments) < 1:
             raise Exception("Invalid syntax for theorem '%s'" % name)
 
-        (rule, replacements, hypotheses) = (
-            arguments[0], arguments[1], arguments[2:])
+        rule = arguments[0]
+        replacements = arguments[1] if len(arguments) > 1 else None
+        hypotheses = arguments[2:] if len(arguments) > 2 else []
+
         parsed_theorems[name] = {'rule': rule, 'replacements': parse_replacements(
             name, replacements), 'hypotheses': hypotheses}
 
@@ -53,8 +59,8 @@ def parse_theorems(theorems):
 
 
 def calculate_environment(code):
-    env = {'axioms': {}, 'rules': {}, 'theorems': {}}
-    types = {'a': 'axioms', 'r': 'rules', 't': 'theorems'}
+    env = {'rules': {}, 'theorems': {}}
+    types = {'r': 'rules', 't': 'theorems'}
 
     code = filter(lambda x: x, code.split('\n'))
     code = filter(lambda x: x, map(
@@ -97,13 +103,11 @@ def apply_rule(env, theorem, theorem_name):
     ru_hypotheses = env['rules'][rule]['hypotheses'].copy()
     ru_conclusion = env['rules'][rule]['conclusion']
 
-    # Process theorem's hypotheses by substituting for other axioms/theorems
+    # Process theorem's hypotheses by substituting for other theorems
     for i, h in enumerate(th_hypotheses):
-        if h not in env['axioms'] and h not in env['theorems']:
-            raise Exception("Invalid axiom/theorem: '%s'" % h)
-        hypothesis = (
-            env['axioms'][h] if h in env['axioms'] else env['theorems'][h]
-        )
+        if h not in env['theorems']:
+            raise Exception("Invalid theorem: '%s'" % h)
+        hypothesis = env['theorems'][h]
         th_hypotheses[i] = hypothesis
 
     for k, v in replacements.items():

@@ -9,7 +9,9 @@ rEqS : ⊢EQ(x,y) -> ⊢EQ(y,x)
 rEqT : ⊢EQ(x,y) -> ⊢EQ(y,z) -> ⊢EQ(x,z)
 
 # Zero is a natural number
-aZ : ⊢0
+rZ : ⊢0
+thZ! : rZ
+
 # Successor
 rS : ⊢x -> ⊢S(x)
 # Successor (object-level)
@@ -37,7 +39,8 @@ rMZ     : ⊢EQ(MUL(x,0),0)
 rMS     : ⊢EQ(MUL(x,S(y)),ADD(x,MUL(x,y)))
 
 # Evenness
-aEvZ : ⊢EV(0)
+rEvZ : ⊢EV(0)
+thEvZ! : rEvZ
 rEvS : ⊢EV(x) -> ⊢EV(S(S(x)))
 
 # Theorem 1: One plus one is two
@@ -55,9 +58,9 @@ th2step4!   : rAZ x=X
 th2         : rEqT x=MUL(X,S(0));y=ADD(X,0);z=X th2step3! th2step4!
 
 # Theorem 3: Two is even
-th3 : rEvS x=0 aEvZ
+th3 : rEvS x=0 thEvZ!
 
 # Theorem 4: Example induction
-th4step1! : rS x=0 aZ
+th4step1! : rS x=0 thZ!
 th4step2! : rSO x=S(0)
 th4       : rInd p=S;n=0 th4step1! th4step2!

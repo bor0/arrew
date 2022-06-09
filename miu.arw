@@ -1,9 +1,10 @@
-a1 : MI
+ra1 : MI
+tha1! : ra1
 
 r1 : xI -> xIU
 r2 : Mx -> Mxx
 r3 : xIIIy -> xUy
 
-t1 : r2 x=I a1
+t1 : r2 x=I tha1!
 t2 : r2 x=II t1
 t3 : r3 x=M;y=I t2

@@ -5,13 +5,15 @@ ruleJoin' : ⊢x -> ⊢y -> ⊢(x)∧(y)  # meta level
 # Terms and theorem needed for th1
 th1step1! : ruleJoin x=X;y=Y
 
-aPrfX : ⊢X
-# Given the proof of ⊢X (aPrfX), we can now conclude Y=>X∧Y
-th1 : ruleMP x=X;y=Y=>X∧Y aPrfX th1step1!
+rPrfX : ⊢X
+thPrfX! : rPrfX
+# Given the proof of ⊢X (thPrfX!), we can now conclude Y=>X∧Y
+th1 : ruleMP x=X;y=Y=>X∧Y thPrfX! th1step1!
 
-aPrfY : ⊢Y
-# Given the proof of ⊢Y (aPrfY), we can now conclude X∧Y
-th2 : ruleMP x=Y;y=X∧Y aPrfY th1
+rPrfY : ⊢Y
+thPrfY! : rPrfY
+# Given the proof of ⊢Y (thPrfY!), we can now conclude X∧Y
+th2 : ruleMP x=Y;y=X∧Y thPrfY! th1
 
 # Combine both th1 and th2 at the meta level
 th3 : ruleJoin' x=Y=>X∧Y;y=X∧Y th1 th2
