@@ -108,6 +108,10 @@ def apply_rule(env, theorem, theorem_name):
         if h not in env['theorems']:
             raise Exception("Invalid theorem: '%s'" % h)
         hypothesis = env['theorems'][h]
+
+        for k, v in replacements.items():
+            hypothesis = hypothesis.replace(k, v)
+
         th_hypotheses[i] = hypothesis
 
     for k, v in replacements.items():
