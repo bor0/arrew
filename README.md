@@ -1,47 +1,48 @@
 # The Arrew theorem prover
 
-Arrew (ARrow REWriter) is a computer program that allows formal mathematical systems to be expressed, and then perform computation to derive theorems.
+Arrew (ARrow REWriter) is a computer program that allows expressing formal systems and deriving theorems.
 
-## Rules
+## Syntax
 
-The syntax for specifying rules is as follows:
-
-```
-r<name> : <expr> -> <expr> -> ... -> <expr>
-```
-
-Lowercase characters in a rule expression are considered a variable, and will be substituted within the expressions.
-
-All expressions but the last are considered the hypothesis (arguments to be passed when used in a theorem), and the last one is the conclusion.
-
-## Theorems
-
-The syntax for specifying theorems is as follows:
+Every statement in an Arrew code is of the form:
 
 ```
-t<name> : <ruleN> <x=X;y=Y;...> <arg1> <arg2> ... <argn>
+r<name> : <expr> [-> <expr> -> ... -> <expr>]
+t<name> : <ruleN> [x=X;y=Y;...] [arg1] [arg2] [...] [argn]
 ```
 
-In this case, the rule `<ruleN>` will be applied to the corresponding arguments. Substitution (`x` with `X`; `y` with `Y`...) will be performed in both the rule's provided arguments and the theorem's hypotheses, and they will be matched/unified. If unification is successful, the final argument in the rule `argn` will be produced as a result.
+The syntax for `<name>` and `<expr>` is any string of characters except `':'` and `' '` (whitespace). Square brackets represent optional values.
+
+Lowercase characters in a rule expression are considered a variable and will be used for substitution within the expressions.
+
+## Semantics
+
+The syntax `r<name>` specifies a rule, and `t<name>` specifies a theorem.
+
+In a rule, all expressions but the last are considered the hypothesis (arguments to be passed when used in a theorem), and the last is the conclusion.
+
+For theorems, the rule `<ruleN>` will be applied to the corresponding arguments. Substitution (`x` with `X`; `y` with `Y`...) will be performed in both the rule's hypotheses and the theorem's provided argument, and they will be matched/unified. If unification is successful, the final argument in the rule `argn` will be the result.
+
+Arrew will print all derived theorems except those whose name ends in a `!`.
 
 ## Example
 
 As an example, consider a simple formal system:
 
 ```
-ra1 : MI
-tha1! : ra1
+rMI : MI
+thMI! : ra1
 
 r1 : xI -> xIU
 r2 : Mx -> Mxx
 r3 : xIIIy -> xUy
 ```
 
-The rule `ra1` specifies the axiom `MI` (converted into theorem `tha!`) and three rules that allow transforming axioms to derive new theorems. Consider the following theorems:
+The rule `rMI` specifies the axiom `MI` (converted into theorem `thMI!`). The remaining three rules allow transforming this rule to derive new theorems. Consider the following theorems:
 
 ```
-t1 : r2 x=I tha1!
-# t1 will be equal to `MII` since the expression `Mx` captures `MI` (note `x` is a variable). The expression `x` will be substituted with the expression `I`
+t1 : r2 x=I thMI!
+# t1 will be equal to `MII` since the expression `Mx` captures `MI` (note `x` is a variable). `x` is substituted with `I`
 t2 : r2 x=II t1
 # Similarly, t2 will be equal to `MIIII` following the previous reasoning
 t3 : r3 x=M,y=I t2
