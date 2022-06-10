@@ -49,7 +49,7 @@ t3 : r3 x=M,y=I t2
 # Since `MIIII` is captured by the rule's `xIIIy` set `x` to `M` and `y` to `I`. Then, `xUy` becomes `MUI`
 ```
 
-See [Peano's axioms](./peano.arw) for a more detailed example; to derive the theorems, run `python3 arrew.py peano.arw`.
+See [Peano's axioms](./examples/peano.arw) for a more detailed example; to derive the theorems, run `python3 arrew.py examples/peano.arw`.
 
 ## Development
 
