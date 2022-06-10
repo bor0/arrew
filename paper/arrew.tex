@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\usepackage{arxiv}
+
+\usepackage{amsmath}
+
+\title{The Arrew theorem prover}
+
+\author{
+  Boro Sitnikovski \\
+  Skopje, North Macedonia \\
+  \texttt{buritomath@gmail.com} \\
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present the mathematical model of a simple theorem prover that allows the user to define inference rules and axioms and then derive theorems based on them.
+\end{abstract}
+
+\keywords{Theorem prover, mathematical model}
+
+\section{Introduction and mathematical model}
+
+Arrew (ARrow REWriter) is a simple theorem prover that allows expressing formal systems and deriving theorems. It uses a simple substitution rule combined with a set equality check to derive theorems.
+
+\textbf{Definition}: A formal system is defined by the tuple $F = (R, E, V, T)$, together with the functions $s_r^n$ and $s_t^n$ where $R_n \in R$ is the set of rules of $n$-ary arguments (the $n$-th argument represents a conclusion, and the others represent hypotheses), $E$ is the set of valid expressions, $V$ is the set of variables, and $T$ is the set of theorems.
+
+Further, let $r \in R_n$, $v \subseteq V \times E$, and let $X[E/V]$ be the expression $X$ in which each occurrence of $V$ is replaced with $E$. The following function performs substitution on a rule's hypotheses and conclusion:
+$$ s_r^n(r, v) = {
+\begin{cases}
+s_r^n(r_1[E/V], \ldots, r_n[E/V], v \setminus \{(V, E) \}), & r = (r_1, \ldots, r_n) \land (V, E) \in v \\
+r & v = \emptyset
+\end{cases}}
+$$
+
+Note that the rule $r$ can be roughly interpreted as a function $r_1 \to \ldots \to r_n$.
+
+Let $h = (h_1, \ldots, h_{n-1})$ where $\forall i, h_i \in T$ i.e. every hypothesis represents a theorem. The following function performs substitution on a theorem's hypotheses:
+$$ s_t^n(h, v) = {
+\begin{cases}
+s_t^n(h_1[E/V], \ldots, h_n[E/V], v \setminus \{(V, E) \}), & h = (h_1, \ldots, h_n) \land (V, E) \in v \\
+h & v = \emptyset
+\end{cases}}
+$$
+
+\textbf{Theorem derivation}: Consider applying the rule $r = (r_1, \ldots, r_n) \in R_n$, together with the set of substitutions $v \subseteq V \times E$ and a sequence of hypotheses $h = (h_1, \ldots, h_{n-1})$ where $\forall i, h_i \in T$. We say that $t = s_r^1((r_n),v) \in T$ (i.e., $t$ is a theorem) if and only if $s_r^{n-1}((r_1, \ldots, r_{n-1}), v) = s_t^{n-1}(h, v)$.
+
+\textbf{Corollary}: For $n = 1$ we have that $s_r^0((), v) = () = s_t^0((), v)$ i.e. all 1-ary rules are theorems: $\forall r, r \in R_1 \to r \in T$.
+
+\textbf{Example}: Let $R_1 = \{ \texttt{MI} \}$, $r_1 = \texttt{(Mx, Mxx)}$ and $R_2 = \{ r_1 \}$; thus $R = \{ R_1, R_2 \}$. Let $E = \{ \texttt{M}, \texttt{I}, \texttt{II} \}$ and $V = \{ \texttt{x}, \texttt{y} \}$. Note that from $R_1$ it follows that $\texttt{MI} \in T$. We will show that $\texttt{MII} \in T$. For the proof we use $r_1$, so we need to show that $s_r^1((\texttt{Mx}), v) = s_t^1((\texttt{MI}), v)$. Since $\texttt{(x, I)} \in V \times E$, we get that $s_r^1((\texttt{Mx}), v) = \texttt{MI} = s_t^1((\texttt{MI}), v)$. Since the hypotheses match the rule's arguments, we conclude that $s_r^1((\texttt{Mxx}),v) = \texttt{MII} \in T$.
+
+\begin{thebibliography}{1}
+
+\bibitem{b1}
+Daniel J Velleman
+\newblock How to Prove It: A Structured Approach.
+\newblock Cambridge University Press, 2006.
+
+\end{thebibliography}
+\end{document}
