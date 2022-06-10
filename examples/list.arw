@@ -1,16 +1,18 @@
+# Lists
 rNil : []
-thNil! : rNil
-
 rCons : [i] -> [x,i]
 
-rLenBase : [x] -> (0,[x])
-rLen : (n,[x,i]) -> (Sn,[i])
+thNil! : rNil
 
 th1step1 : rCons i=;x=3 thNil!
 th1step2 : rCons i=3,;x=2 th1step1
 th1step3 : rCons x=1;i=2,3, th1step2
 
-thlenstep1 : rLenBase x=1,2,3, th1step3
-thlenstep2 : rLen x=1;i=2,3,;n=0 thlenstep1
-thlenstep3 : rLen x=2;i=3,;n=S0 thlenstep2
-thlenstep4 : rLen x=3;i=;n=SS0 thlenstep3
+# Lists with length
+rLenNil : [] -> (0,[])
+rLen : (n,[i]) -> (S(n),[x,i])
+
+thlenstep1 : rLenNil i=i thNil!
+thlenstep2 : rLen n=0;i=;x=3 thlenstep1
+thlenstep3 : rLen x=2;i=3,;n=S(0) thlenstep2
+thlenstep4 : rLen x=1;i=2,3,;n=S(S(0)) thlenstep3
