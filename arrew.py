@@ -133,7 +133,7 @@ if len(sys.argv) != 2:
     exit('Usage: python %s <filename.arw>' % sys.argv[0])
 
 if not exists(sys.argv[1]):
-    exit("Filename '%s' not found." % sys.argv[0])
+    exit("Filename '%s' not found." % sys.argv[1])
 
 with open(sys.argv[1]) as f:
     code = f.read()
