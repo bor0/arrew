@@ -43,7 +43,7 @@ def parse_theorems(theorems):
 
     # Process theorems, checking for valid syntax and process replacements on the way
     for name in theorems:
-        arguments = theorems[name].split(' ')
+        arguments = list(filter(lambda x: x, theorems[name].split(' ')))
 
         if len(arguments) < 1:
             raise Exception("Invalid syntax for theorem '%s'" % name)
@@ -103,10 +103,15 @@ def apply_rule(env, theorem, theorem_name):
     ru_hypotheses = env['rules'][rule]['hypotheses'].copy()
     ru_conclusion = env['rules'][rule]['conclusion']
 
+    for k, v in replacements.items():
+        if v not in env['theorems']:
+            raise Exception("Invalid theorem: '%s' in '%s'" % (v, theorem_name))
+        replacements[k] = env['theorems'][v]
+
     # Process theorem's hypotheses by substituting for other theorems
     for i, h in enumerate(th_hypotheses):
         if h not in env['theorems']:
-            raise Exception("Invalid theorem: '%s'" % h)
+            raise Exception("Invalid theorem: '%s' in '%s'" % (h, theorem_name))
         hypothesis = env['theorems'][h]
 
         for k, v in replacements.items():

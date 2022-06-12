@@ -1,23 +1,40 @@
-# Lists
-rNil : NIL
-rCons : i -> x:i
+# Zero is a natural number (proof)
+rZ : ⊢0
+thZ! : rZ
 
+# Zero is a natural number (term)
+rTmZ : 0
+tmZ! : rTmZ
+
+# Successor
+rS : ⊢x -> ⊢S(x) # proof
+rTmS : S(x) # term
+
+# Lists
+# NIL (proof)
+rNil : ⊢NIL
 thNil! : rNil
 
-th1step1 : rCons i=NIL;x=3 thNil!
-th1step2 : rCons i=3:NIL;x=2 th1step1
-th1step3 : rCons x=1;i=2:3:NIL th1step2
+# NIL (term)
+rTmNil : NIL
+tmNil! : rTmNil
 
-# Lists with length
-rLenNil : NIL -> (0,NIL)
-rLen : (n,i) -> (S(n),x:i)
+# Cons (proof)
+rCons : ⊢i -> ⊢x -> ⊢x:i
+# Cons (term)
+rTmCons : x:i
 
-thlenstep1 : rLenNil i=i thNil!
-thlenstep2 : rLen n=0;i=NIL;x=3 thlenstep1
-thlenstep3 : rLen n=S(0);i=3:NIL;x=2 thlenstep2
-thlenstep4 : rLen n=S(S(0));i=2:3:NIL;x=1 thlenstep3
+thOne! : rS x=tmZ! thZ!
+tmOne! : rTmS x=tmZ!
 
-# Concatenation
-rConcat : (n,i:NIL) -> (o,j) -> (ADD(n,o),i:j)
+thTwo! : rS x=tmOne! thOne!
+tmTwo! : rTmS x=tmOne!
 
-thconcat : rConcat n=S(0);i=3;o=S(S(0));j=2:3:NIL thlenstep2 thlenstep3
+thThree! : rS x=tmTwo! thTwo!
+tmThree! : rTmS x=tmTwo!
+
+th1step1 : rCons i=tmNil!;x=tmThree! thNil! thThree!
+tm1step1! : rTmCons x=tmThree!;i=tmNil!
+th1step2 : rCons i=tm1step1!;x=tmTwo! th1step1 thTwo!
+tm1step2! : rTmCons x=tmTwo!;i=tm1step1!
+th1step3 : rCons i=tm1step2!;x=tmOne! th1step2 thOne!

@@ -1,10 +1,22 @@
-ra1 : MI
-tha1! : ra1
+rTmM : M
+rTmI : I
+rTmU : U
+tmM! : rTmM
+tmI! : rTmI
+tmU! : rTmU
 
-r1 : xI -> xIU
-r2 : Mx -> Mxx
-r3 : xIIIy -> xUy
+rTmxy : xy
 
-t1 : r2 x=I tha1!
-t2 : r2 x=II t1
-t3 : r3 x=M;y=I t2
+rMI : |- MI
+thMI : rMI
+
+r1 : |- xI -> |- xIU
+r2 : |- Mx -> |- Mxx
+r3 : |- xIIIy -> |- xUy
+
+thMII : r2 x=tmI! thMI
+
+tmII! : rTmxy x=tmI!;y=tmI!
+thMIIII : r2 x=tmII! thMII
+
+thMUI : r3 x=tmM!;y=tmI! thMIIII

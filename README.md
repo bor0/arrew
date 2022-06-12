@@ -21,35 +21,13 @@ The syntax `r<name>` specifies a rule, and `t<name>` specifies a theorem.
 
 In a rule, all expressions but the last are considered the hypothesis (arguments to be passed when used in a theorem), and the last is the conclusion.
 
-For theorems, the rule `<ruleN>` will be applied to the corresponding arguments. Substitution (`x` with `X`; `y` with `Y`...) will be performed in both the rule's hypotheses and the theorem's provided argument, and they will be matched/unified. If unification is successful, the final argument in the rule `argn` will be the result.
+For theorems, the rule `<ruleN>` will be applied to the corresponding arguments. Substitution with theorems (`x` with theorem `X`; `y` with theorem `Y`...) will be performed in both the rule's hypotheses and the theorem's provided argument, and they will be matched/unified. If unification is successful, the final argument in the rule `argn` will be the result.
 
 Arrew will print all derived theorems except those whose name ends in a `!`.
 
 ## Example
 
-As an example, consider a simple formal system:
-
-```
-rMI : MI
-thMI! : ra1
-
-r1 : xI -> xIU
-r2 : Mx -> Mxx
-r3 : xIIIy -> xUy
-```
-
-The rule `rMI` specifies the axiom `MI` (converted into theorem `thMI!`). The remaining three rules allow transforming this rule to derive new theorems. Consider the following theorems:
-
-```
-t1 : r2 x=I thMI!
-# t1 will be equal to `MII` since the expression `Mx` captures `MI` (note `x` is a variable). `x` is substituted with `I`
-t2 : r2 x=II t1
-# Similarly, t2 will be equal to `MIIII` following the previous reasoning
-t3 : r3 x=M,y=I t2
-# Since `MIIII` is captured by the rule's `xIIIy` set `x` to `M` and `y` to `I`. Then, `xUy` becomes `MUI`
-```
-
-See [Peano's axioms](./examples/peano.arw) for a more detailed example; to derive the theorems, run `python3 arrew.py examples/peano.arw`.
+See [MU puzzle](./examples/miu.arw) for a simple example. See [Peano's axioms](./examples/peano.arw) for a more detailed example; to derive the theorems, run `python3 arrew.py examples/peano.arw`.
 
 ## Development
 

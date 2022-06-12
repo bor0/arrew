@@ -1,7 +1,6 @@
 \documentclass{article}
 
 \usepackage{arxiv}
-
 \usepackage{amsmath}
 
 \title{The Arrew theorem prover}
@@ -24,27 +23,27 @@ Arrew (ARrow REWriter) is a simple theorem prover that allows expressing formal 
 
 \section{Mathematical model}
 
-A formal system is defined by the tuple $F = (R, S, V, T)$ together with the functions $subst_{rule}^n$ and $subst_{thm}^n$ where $R_n \in R$ is a set of rules of $n$-ary arguments, $S$ is a set of string of symbols, $V$ is a set of variables, and $T$ is a set of theorems. A rule $r \in R_n$ is a sequence of string of symbols; it can be roughly interpreted as a function $r_1 \to \ldots \to r_n$. The $n$-th argument represents a conclusion, and the others represent hypotheses.
+A formal system is defined by the tuple $F = (R, V, T)$ together with the functions $subst_{rule}^n$ and $subst_{thm}^n$ where $R_n \in R$ is a set of rules of $n$-ary arguments, $V$ is a set of variables, and $T$ is a set of theorems. A rule $r \in R_n$ is a sequence of string of symbols; it can be roughly interpreted as a function $r_1 \to \ldots \to r_n$, where the $n$-th argument represents a conclusion, and the others represent hypotheses.
 
-Let $V_S \subseteq V \times S$ and $X[s/v]$ denote the expression $X$ in which each occurrence of $v$ is replaced with $s$. The following function performs substitution on a rule's hypotheses and conclusion:
-$$ subst_{rule}^n(r, V_S) = {
+Let $S \subseteq V \times T$ denote a set of substitutions, and $X[t/v]$ denote the expression $X$ in which each occurrence of $v$ is replaced with $t$. We define the following function which performs substitution on a rule's hypotheses and conclusion:
+$$ subst_{rule}^n(r, S) = {
 \begin{cases}
-subst_{rule}^n(r_1[s/v], \ldots, r_n[s/v], V_S \setminus \{(v, s) \}), & r = (r_1, \ldots, r_n) \land (v, s) \in V_S \\
-r & V_S = \emptyset
+subst_{rule}^n(r_1[t/v], \ldots, r_n[t/v], S \setminus \{(v, t) \}), & r = (r_1, \ldots, r_n) \land (v, t) \in S \\
+r & S = \emptyset
 \end{cases}}
 $$
 
-Let $h = (h_1, \ldots, h_{n-1})$ where $\forall i, h_i \in T$. The function $subst_{thm}^n(h, V_S)$ is defined similarly.
+Let $h = (h_1, \ldots, h_{n-1})$ where $\forall i, h_i \in T$. The function $subst_{thm}^n(h, S)$ is defined similarly.
 
-\textbf{Theorem derivation}: We say that $t = subst_{rule}^1((r_n), V_S) \in T$ (i.e., $t$ is a theorem) if and only if:
-$$subst_{rule}^{n-1}((r_1, \ldots, r_{n-1}), V_S) = subst_{thm}^{n-1}(h, V_S)$$
+\textbf{Theorem derivation}: We say that $t = subst_{rule}^1((r_n), S) \in T$ (i.e., $t$ is a theorem) if and only if:
+$$subst_{rule}^{n-1}((r_1, \ldots, r_{n-1}), S) = subst_{thm}^{n-1}(h, S)$$
 
-Note that for $n = 1$ we have $subst_{rule}^0((), V_S) = () = subst_{thm}^0((), V_S)$ i.e. all 1-ary rules are theorems:
+Note that for $n = 1$ we have $subst_{rule}^0((), S) = () = subst_{thm}^0((), S)$ i.e. all 1-ary rules are theorems:
 $$\forall r, r \in R_1 \to r \in T$$
 
 \section{Example}
 
-Let $R = \{ \{ (\texttt{MI}) \}, \{ (\texttt{Mx, Mxx}) \} \}$, $S = \{ \texttt{M}, \texttt{I}, \texttt{II} \}$, $V = \{ \texttt{x}, \texttt{y} \}$ and $V_S = \{ (\texttt{x, I}) \}$. Note that $R_1 \in R$ implies $\texttt{MI} \in T$. To prove $\texttt{MII} \in T$, we use the rule within $R_2$ and since $(\texttt{x, I}) \in V \times S$, we get that $subst_{rule}^1((\texttt{Mx}), V_S) = \texttt{MI} = subst_{thm}^1((\texttt{MI}), V_S)$. Since the rule's arguments match the theorem's hypotheses, $subst_{rule}^1((\texttt{Mxx}), V_S) = \texttt{MII} \in T$.
+Let $R = \{ \{ \vdash\texttt{MI}, \texttt{I} \}, \{ (\vdash\texttt{Mx}, \vdash\texttt{Mxx}) \} \}$, $V = \{ \texttt{x} \}$, and $S = \{ (\texttt{x, I}) \}$. Note that \texttt{I} is a 1-ary rule so $\texttt{I} \in T$, and similarly $\vdash \texttt{MI} \in T$. To prove $\vdash\texttt{MII} \in T$, we use the rule within $R_2$ and since $(\texttt{x, I}) \in S$, we get that $subst_{rule}^1((\vdash\texttt{Mx}), S) = \vdash\texttt{MI} = subst_{thm}^1((\vdash\texttt{MI}), S)$. Since the rule's arguments match the theorem's hypotheses, $subst_{rule}^1((\vdash\texttt{Mxx}), S) = \vdash\texttt{MII} \in T$.
 
 \begin{thebibliography}{1}
 
