@@ -104,9 +104,9 @@ def apply_rule(env, theorem, theorem_name):
     ru_conclusion = env['rules'][rule]['conclusion']
 
     for k, v in replacements.items():
-        if v not in env['theorems']:
+        if v and v not in env['theorems']:
             raise Exception("Invalid theorem: '%s' in '%s'" % (v, theorem_name))
-        replacements[k] = env['theorems'][v]
+        replacements[k] = env['theorems'][v] if v else ''
 
     # Process theorem's hypotheses by substituting for other theorems
     for i, h in enumerate(th_hypotheses):
