@@ -1,0 +1,31 @@
+# SKI rules
+rId : ⊢Ix -> ⊢x
+rConst : ⊢Kxy -> ⊢x
+rSubst : ⊢Sxyz -> ⊢xz(yz)
+
+# SKI base terms
+rKTerm : K
+rSTerm : S
+tmS! : rSTerm
+tmK! : rKTerm
+
+# SKI term construction rules
+rTerm : xy
+rTermParen : (x)
+
+#################################
+# Initial theorem for the example
+rEgTerm : ⊢ISKSK
+thEgTerm : rEgTerm
+
+# Terms needed for the proofs
+tmSK! : rTerm x=tmS!;y=tmK!
+tmSKSK! : rTerm x=tmSK!;y=tmSK!
+tm(SK)! : rTermParen x=tmSK!
+
+# Theorems
+thSKSK : rId x=tmSKSK! thEgTerm
+thKK(SK) : rSubst x=tmK!;y=tmS!;z=tmK! thSKSK
+
+# Finally, we prove that, by the assumption of ⊢ISKSK we can deduce ⊢K (note this is different from K (tmK!))
+thK : rConst x=tmK!;y=tm(SK)! thKK(SK)
