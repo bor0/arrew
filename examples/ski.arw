@@ -31,11 +31,11 @@ tm((SK)S)! : rTm x=tm(SK)!;y=tmS!
 tm(((SK)S)K))! : rTm x=tm((SK)S)!;y=tmK!
 
 # Theorems
-th(((SK)S)K) : rId d=;a=;x=tm(((SK)S)K))!;i=;b= thEgTerm
-thKK(SK) : rSubst d=;a=;x=tmK!;y=tmS!;z=tmK!;i=;b= th(((SK)S)K)
+th(((SK)S)K) : rId x=tm(((SK)S)K))! thEgTerm
+thKK(SK) : rSubst x=tmK!;y=tmS!;z=tmK! th(((SK)S)K)
 
 # Finally, we prove that, by the assumption of ⊢ISKSK we can deduce ⊢K (note this is different from K (tmK!))
-thK : rConst d=;a=;x=tmK!;y=tm(SK)!;i=;b= thKK(SK)
+thK : rConst x=tmK!;y=tm(SK)! thKK(SK)
 
 ###########
 # Recursion
@@ -46,10 +46,10 @@ thRecTerm : rRecTerm
 # Terms needed for the proof
 tm(SI)! : rTm x=tmS!;y=tmI!
 tm((SI)I)! : rTm x=tm(SI)!;y=tmI!
-tm(((SI)I))! : rTm x=tm((SI)I)!;y=
+tm(((SI)I))! : rTm x=tm((SI)I)!
 tm(I(((SI)I)))! : rTm x=tmI!;y=tm(((SI)I))!
 
 # SII(SII) = I(SII)(I(SII)) = I(SII)(SII) = SII(SII)
-tmRecStep1 : rSubst d=;a=;x=tmI!;y=tmI!;z=tm(((SI)I))!;i=;b= thRecTerm
-tmRecStep2 : rId d=tm(!;a=tm(I(((SI)I)))!;x=tm(((SI)I))!;i=;b=tm)! tmRecStep1
-tmRecStep3 : rId d=;a=tm(!;x=tm(((SI)I))!;i=tm(((SI)I))!;b=tm)! tmRecStep2
+tmRecStep1 : rSubst x=tmI!;y=tmI!;z=tm(((SI)I))! thRecTerm
+tmRecStep2 : rId d=tm(!;a=tm(I(((SI)I)))!;x=tm(((SI)I))!;b=tm)! tmRecStep1
+tmRecStep3 : rId a=tm(!;x=tm(((SI)I))!;i=tm(((SI)I))!;b=tm)! tmRecStep2
