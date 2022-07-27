@@ -88,3 +88,12 @@ th3 : rEvS x=tmZ! thEvZ!
 th4step1! : rS x=tmZ! thZ!
 th4step2! : rSO x=tmOne!
 th4       : rInd p=tmS!;n=tmZ! th4step1! th4step2!
+
+# Theorem 5: Example function: f(1) = 2
+rF : ⊢EQ(F(x),ADD(x,S(0))) # f(x) = x+1
+rtmF : F(x)
+
+tmF1Eq2! : rF x=tmOne!
+tmF1! : rtmF x=tmOne!
+
+th5 : rEqT x=tmF1!;y=tmOneAddOne!;z=tmTwo! tmF1Eq2! th1
