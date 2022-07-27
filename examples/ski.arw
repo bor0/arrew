@@ -16,6 +16,9 @@ rId : ⊢d(Ix)b -> ⊢dxb
 rConst : ⊢d((Kx)y)b -> ⊢dxb
 rSubst : ⊢d(((Sx)y)z)b -> ⊢d((xz)(yz))b
 
+# Need this extra rule for transforming expressions with parentheses
+rParen : ⊢d(xy)b -> ⊢dxyb
+
 #################################
 # Initial theorem for the example
 rEgTerm : ⊢(I(((SK)S)K))
@@ -32,3 +35,21 @@ thKK(SK) : rSubst d=;x=tmK!;y=tmS!;z=tmK!;b= th(((SK)S)K)
 
 # Finally, we prove that, by the assumption of ⊢ISKSK we can deduce ⊢K (note this is different from K (tmK!))
 thK : rConst d=;x=tmK!;y=tm(SK)!;b= thKK(SK)
+
+###########
+# Recursion
+
+rRecTerm : ⊢(((SI)I)(((SI)I)))
+thRecTerm : rRecTerm
+
+# Terms needed for the proof
+tm(SI)! : rTm x=tmS!;y=tmI!
+tm((SI)I)! : rTm x=tm(SI)!;y=tmI!
+tm(((SI)I))! : rTm x=tm((SI)I)!;y=
+tm(I(((SI)I)))! : rTm x=tmI!;y=tm(((SI)I))!
+
+# SII(SII) = I(SII)(I(SII)) = I(SII)(SII) = SII(SII)
+tmRecStep1 : rSubst d=;x=tmI!;y=tmI!;z=tm(((SI)I))!;b= thRecTerm
+tmRecStep2 : rParen d=;x=tm(I(((SI)I)))!;y=tm(I(((SI)I)))!;b= tmRecStep1
+tmRecStep3 : rId d=tm(I(((SI)I)))!;x=tm(((SI)I))!;b= tmRecStep2
+tmRecStep4 : rId d=;x=tm(((SI)I))!;b=tm(((SI)I))! tmRecStep3
