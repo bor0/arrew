@@ -27,7 +27,13 @@ Arrew will print all derived theorems except those whose name ends in a `!`.
 
 ## Example
 
-See [MU puzzle](./examples/miu.arw) for a simple example. See [Peano's axioms](./examples/peano.arw) for a more detailed example; to derive the theorems, run `python3 arrew.py examples/peano.arw`.
+In the [MU puzzle](./examples/miu.arw) example we provide a simple usage of a small formal system.
+
+We implement number addition and multiplication with the [PQ](./examples/pq.arw) and [TQ](examples/tq.arw) system respectively. See [Peano's axioms](./examples/peano.arw) for a more detailed example on numbers.
+
+See [Gentzen](./examples/gentzen.arw) and [SKI calculus](./examples/ski.arw) for logical systems.
+
+There is also an implementation of [lists](examples/list.arw), as well as a system for [coordinates](./examples/coord.arw) and a small [game](./examples/coordgame.arw).
 
 ## Development
 
