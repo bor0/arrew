@@ -8,6 +8,10 @@ rEqR : ⊢EQ(x,x)
 rEqS : ⊢EQ(x,y) -> ⊢EQ(y,x)
 rEqT : ⊢EQ(x,y) -> ⊢EQ(y,z) -> ⊢EQ(x,z)
 
+# Inequality
+rNeq : ⊢!EQ(x,ADD(S(x),y))
+rNeqT : ⊢!EQ(x,y) -> ⊢EQ(y,z) -> ⊢!EQ(x,z)
+
 # Zero is a natural number
 rZ : ⊢0
 thZ! : rZ
@@ -97,3 +101,8 @@ tmF1Eq2! : rF x=tmOne!
 tmF1! : rtmF x=tmOne!
 
 th5 : rEqT x=tmF1!;y=tmOneAddOne!;z=tmTwo! tmF1Eq2! th1
+
+# Theorem 6: 0!=1
+th6step1! : rNeq x=tmZ!;y=tmZ!
+th6step2! : rAZ x=tmOne!
+th6 : rNeqT x=tmZ!;y=tmOneAddZero!;z=tmOne! th6step1! th6step2!
