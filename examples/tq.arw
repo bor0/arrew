@@ -12,7 +12,6 @@ rComp : x-Ty-Qz -> Cz # (x+1)*(y+1) = z -> Cz
 
 # Terms needed for the proofs
 tm--! : rTmMk x=tm-!;y=tm-!
-tm---! : rTmMk x=tm--!;y=tm-!
 tm----! : rTmMk x=tm--!;y=tm--!
 
 thmTwoMultOne : rBase x=tm--!
