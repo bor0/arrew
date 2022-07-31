@@ -109,7 +109,12 @@ def apply_rule(env, theorem, theorem_name):
         if v and v not in env['theorems']:
             raise Exception("Invalid theorem: '%s' in '%s'" %
                             (v, theorem_name))
+
         replacements[k] = env['theorems'][v] if v else ''
+
+        if not isinstance(replacements[k], str):
+            raise Exception("Invalid theorem: '%s' in '%s'" %
+                            (v, theorem_name))
 
     # Process theorem's hypotheses by substituting for other theorems
     for i, h in enumerate(th_hypotheses):
