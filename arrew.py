@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import string
-
 from os.path import exists
 
 
@@ -20,7 +18,7 @@ def parse_rules(rules):
 
 
 def parse_replacements(theorem_name, replacements):
-    parsed_replacements = {k: '' for k in string.ascii_lowercase}
+    parsed_replacements = {}
 
     if replacements == None:
         return parsed_replacements
