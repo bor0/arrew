@@ -104,11 +104,11 @@ def apply_rule(env, theorem, theorem_name):
     ru_conclusion = env['rules'][rule]['conclusion']
 
     for k, v in replacements.items():
-        if v and v not in env['theorems']:
+        if not v or v not in env['theorems']:
             raise Exception("Invalid theorem: '%s' in '%s'" %
                             (v, theorem_name))
 
-        replacements[k] = env['theorems'][v] if v else ''
+        replacements[k] = env['theorems'][v]
 
         if not isinstance(replacements[k], str):
             raise Exception("Invalid theorem: '%s' in '%s'" %
