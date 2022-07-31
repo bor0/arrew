@@ -29,7 +29,7 @@ Arrew will print all derived theorems except those whose name ends in a `!`.
 
 In the [MU puzzle](./examples/miu.arw) example we provide a simple usage of a small formal system.
 
-We implement number addition and multiplication with the [PQ](./examples/pq.arw) and [TQ](examples/tq.arw) system respectively. See [Peano's axioms](./examples/peano.arw) for a more detailed example on numbers.
+We implement number addition and multiplication with the [PQ](./examples/pq.arw) and [TQ](examples/tq.arw) system respectively. Prime numbers with the [DND](examples/dnd.arw) system. See [Peano's axioms](./examples/peano.arw) for a more detailed example on numbers.
 
 See [Gentzen](./examples/gentzen.arw) and [SKI calculus](./examples/ski.arw) for logical systems.
 
