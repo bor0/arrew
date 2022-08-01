@@ -1,40 +1,27 @@
-# Zero is a natural number (proof)
-rZ : ⊢0
-thZ! : rZ
-
 # Zero is a natural number (term)
 rTmZ : 0
 tmZ! : rTmZ
 
 # Successor
-rS : ⊢x -> ⊢S(x) # proof
 rTmS : S(x) # term
 
 # Lists
 # NIL (proof)
-rNil : ⊢NIL
-thNil! : rNil
+rMkList : (x y)
+rCar : (x y) -> x
+rCdr : (x y) -> y
 
 # NIL (term)
 rTmNil : NIL
 tmNil! : rTmNil
 
-# Cons (proof)
-rCons : ⊢i -> ⊢x -> ⊢x:i
-# Cons (term)
-rTmCons : x:i
-
-thOne! : rS x=tmZ! thZ!
 tmOne! : rTmS x=tmZ!
-
-thTwo! : rS x=tmOne! thOne!
 tmTwo! : rTmS x=tmOne!
-
-thThree! : rS x=tmTwo! thTwo!
 tmThree! : rTmS x=tmTwo!
 
-th1step1 : rCons i=tmNil!;x=tmThree! thNil! thThree!
-tm1step1! : rTmCons x=tmThree!;i=tmNil!
-th1step2 : rCons i=tm1step1!;x=tmTwo! th1step1 thTwo!
-tm1step2! : rTmCons x=tmTwo!;i=tm1step1!
-th1step3 : rCons i=tm1step2!;x=tmOne! th1step2 thOne!
+thLstep1! : rMkList x=tmThree!;y=tmNil!
+thLstep2! : rMkList x=tmTwo!;y=thLstep1!
+thL : rMkList x=tmOne!;y=thLstep2!
+
+thCarEg : rCar x=tmOne!;y=thLstep2! thL
+thCdrEg : rCdr x=tmOne!;y=thLstep2! thL
